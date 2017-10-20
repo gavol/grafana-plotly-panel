@@ -24,12 +24,12 @@ module.exports = function(grunt) {
         cwd: 'node_modules/plotly.js/dist',
         expand: true,
         src: ['plotly.min.js'],
-        dest: 'dist/lib'
+        dest: 'src/lib'
       },
       libs2: {
-        cwd: 'node_modules/plotly.js/dist',
+        cwd: 'hack',
         expand: true,
-        src: ['plotly.min.js'],
+        src: ['plotly.min.d.ts'],
         dest: 'src/lib'
       },
 
@@ -37,7 +37,7 @@ module.exports = function(grunt) {
       dist_js: {
         expand: true,
         cwd: 'src',
-        src: ['**/*.ts', '**/*.d.ts'],
+        src: ['**/*.ts', '**/*.d.ts', 'lib/*'],
         dest: 'dist'
       },
       dist_html: {
@@ -82,6 +82,16 @@ module.exports = function(grunt) {
           experimentalDecorators: true,
           sourceMap: true,
           noImplicitAny: false,
+          generateTsConfig: true,
+          
+      "paths": {
+        "plotly.js": [
+          "node_modules/plotly.js/dist/plotly.js"
+        ]
+      },
+      "types": [
+        "plotly.js"
+      ],
         }
       }
     },

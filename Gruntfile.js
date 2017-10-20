@@ -1,39 +1,88 @@
 module.exports = function(grunt) {
-
   require('load-grunt-tasks')(grunt);
+
   var pkgJson = require('./package.json');
 
-  grunt.loadNpmTasks('grunt-execute');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-typescript');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-string-replace');
 
   grunt.initConfig({
-    gitinfo: {},
-
-    clean: ["dist"],
+    clean: ['dist', 'src/lib'],
 
     copy: {
-      src_to_dist: {
-        cwd: 'src',
+      hack_grafana_sdk: { // See: https://github.com/grafana/grafana-sdk-mocks/issues/1
         expand: true,
-        src: ['**/*', '!**/*.js', '!**/*.scss', '!img/**/*', "!**/plugin.json"],
+        flatten: true,
+        cwd: 'hack',
+        src: ['*.ts'],
+        dest: 'node_modules/grafana-sdk-mocks/app/headers'
+      },
+
+      libs: {
+        cwd: 'node_modules/plotly.js/dist',
+        expand: true,
+        src: ['plotly.min.js'],
+        dest: 'dist/lib'
+      },
+      libs2: {
+        cwd: 'node_modules/plotly.js/dist',
+        expand: true,
+        src: ['plotly.min.js'],
+        dest: 'src/lib'
+      },
+
+
+      dist_js: {
+        expand: true,
+        cwd: 'src',
+        src: ['**/*.ts', '**/*.d.ts'],
         dest: 'dist'
       },
-      pluginDef: {
+      dist_html: {
         expand: true,
-        src: ['README.md'],
+        flatten: true,
+        cwd: 'src/partials',
+        src: ['*.html'],
+        dest: 'dist/partials/'
+      },
+      dist_css: {
+        expand: true,
+        flatten: true,
+        cwd: 'src/css',
+        src: ['*.css'],
+        dest: 'dist/css/'
+      },
+      dist_img: {
+        expand: true,
+        flatten: true,
+        cwd: 'src/img',
+        src: ['*.*'],
+        dest: 'dist/img/'
+      },
+      dist_statics: {
+        expand: true,
+        flatten: true,
+        src: ['src/plugin.json', 'LICENSE', 'README.md'],
+        dest: 'dist/'
+      }
+    },
+
+    typescript: {
+      build: {
+        src: ['dist/**/*.ts', '!**/*.d.ts'],
         dest: 'dist',
-      },
-      externals: {
-        cwd: 'src',
-        expand: true,
-        src: ['**/external/*'],
-        dest: 'dist'
-      },
-      img_to_dist: {
-        cwd: 'src',
-        expand: true,
-        src: ['img/**/*'],
-        dest: 'dist'
+        options: {
+          module: 'system',
+          target: 'es5',
+          rootDir: 'dist/',
+          declaration: true,
+          emitDecoratorMetadata: true,
+          experimentalDecorators: true,
+          sourceMap: true,
+          noImplicitAny: false,
+        }
       }
     },
 
@@ -58,32 +107,24 @@ module.exports = function(grunt) {
     },
 
     watch: {
-      rebuild_all: {
-        files: ['src/**/*'],
-        tasks: ['default'],
-        options: {spawn: false}
-      },
-    },
-
-    babel: {
+      files: ['src/**/*.ts', 'src/**/*.html', 'src/**/*.css', 'src/img/*.*', 'src/plugin.json', 'README.md'],
+      tasks: ['default'],
       options: {
-        sourceMap: true,
-        presets: ['es2015'],
-        plugins: ['transform-es2015-modules-systemjs', 'transform-es2015-for-of'],
-      },
-      dist: {
-        files: [{
-          cwd: 'src',
-          expand: true,
-          src: ['*.js'],
-          dest: 'dist',
-          ext: '.js'
-        }]
+        debounceDelay: 250,
       },
     }
   });
 
-  grunt.loadNpmTasks('grunt-gitinfo');
-  grunt.loadNpmTasks('grunt-string-replace');
-  grunt.registerTask('default', ['gitinfo', 'clean', 'string-replace', 'copy', 'babel']);
+  grunt.registerTask('default', [
+    'clean',
+    'copy:hack_grafana_sdk',
+    'copy:libs', 'copy:libs2',
+    'copy:dist_js',
+    'typescript:build',
+    'copy:dist_html',
+    'copy:dist_css',
+    'copy:dist_img',
+    'copy:dist_statics',
+    'string-replace'
+  ]);
 };

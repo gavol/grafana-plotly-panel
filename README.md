@@ -10,10 +10,20 @@ Render metrics using the plot.ly javascript framework
 ![Screenshot of 3d scatter plot](https://raw.githubusercontent.com/NatelEnergy/grafana-plotly-panel/master/src/img/screenshot-scatter-3d.png)
 ![Screenshot of the options screen](https://raw.githubusercontent.com/NatelEnergy/grafana-plotly-panel/master/src/img/screenshot-options.png)
 
+### Building
+
+To complie, run:
+```
+npm install -g yarn
+yarn install --pure-lockfile
+grunt
+```
+
 #### Changelog
 
 ##### v0.0.4  (not released yet)
-- Update to plotly v1.30.0
+- Load plotly from npm (1.31+)
+- Convert to TypeScript
 
 ##### v0.0.3
 

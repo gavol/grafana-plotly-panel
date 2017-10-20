@@ -1,29 +1,23 @@
+///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 
 import {MetricsPanelCtrl} from  'app/plugins/sdk';
 
 import _ from 'lodash';
 import moment from 'moment';
 import angular from 'angular';
+import $ from 'jquery';
 
-import * as Plotly from './external/plotly';
+import * as Plotly from './lib/plotly.min';
 
 class PlotlyPanelCtrl extends MetricsPanelCtrl {
+  static templateUrl = 'partials/module.html';
 
-  constructor($scope, $injector, $q, $rootScope, $timeout, $window, timeSrv, uiSegmentSrv) {
-    super($scope, $injector);
+  sizeChanged: boolean;
+  initalized: boolean;
+  $tooltip: any;
 
-    this.$rootScope = $rootScope;
-    this.timeSrv = timeSrv;
-    this.uiSegmentSrv = uiSegmentSrv;
-    this.q = $q;
-
-    this.sizeChanged = true;
-    this.initalized = false;
-
-    this.$tooltip = $('<div id="tooltip" class="graph-tooltip">');
-
-
-    var dcfg = {
+  defaults = { 
+    pconfig: {
       mapping: {
         x: null,
         y: null,
@@ -95,10 +89,31 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
           zaxis:{title: 'Z AXIS'},
         },
       }
-    };
+    }
+  };
 
-    // Make sure it has the default settings (may have more!)
-    this.panel.pconfig = $.extend(true, dcfg, this.panel.pconfig );
+  trace: any;
+  layout: any;
+  graph: any;
+  seriesList: Array<any>;
+  axis: Array<any>
+  segs: any;
+  mouse: any;
+  data: any;
+
+
+  /** @ngInject **/
+  constructor($scope, $injector, $window, private $rootScope, private uiSegmentSrv) {
+    super($scope, $injector);
+
+    this.sizeChanged = true;
+    this.initalized = false;
+
+    this.$tooltip = $('<div id="tooltip" class="graph-tooltip">');
+
+
+    // defaults configs
+    _.defaultsDeep(this.panel, this.defaults);
 
     var cfg = this.panel.pconfig;
     this.trace = { };
@@ -611,7 +626,7 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
     _.forEach(txt, (val) => {
       segs.push( this.uiSegmentSrv.newSegment( val ) );
     });
-    return this.q.when( segs );
+    return this.$q.when( segs );
   }
 }
 PlotlyPanelCtrl.templateUrl = 'module.html';

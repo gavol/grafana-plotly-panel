@@ -7,10 +7,7 @@ import moment from 'moment';
 import angular from 'angular';
 import $ from 'jquery';
 
-//import * as Plotly from './lib/plotly.min';
-
-import * as Plotly from 'plotly.js';
-
+import * as Plotly from './lib/plotly.min';
 
 class PlotlyPanelCtrl extends MetricsPanelCtrl {
   static templateUrl = 'partials/module.html';

@@ -81,17 +81,7 @@ module.exports = function(grunt) {
           emitDecoratorMetadata: true,
           experimentalDecorators: true,
           sourceMap: true,
-          noImplicitAny: false,
-          generateTsConfig: true,
-          
-      "paths": {
-        "plotly.js": [
-          "node_modules/plotly.js/dist/plotly.js"
-        ]
-      },
-      "types": [
-        "plotly.js"
-      ],
+          noImplicitAny: false
         }
       }
     },

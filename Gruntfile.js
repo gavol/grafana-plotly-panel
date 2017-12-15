@@ -72,6 +72,7 @@ module.exports = function(grunt) {
           "experimentalDecorators": true,
           "noImplicitAny": false,
           "strictNullChecks": false,
+          "skipLibCheck": true
         }
       }
     },

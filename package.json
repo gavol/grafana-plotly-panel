@@ -31,6 +31,7 @@
     "@types/plotly.js": "^1.28.7",
     "grafana-sdk-mocks": "github:grafana/grafana-sdk-mocks",
     "grunt": "^1.0.1",
+    "grunt-ts": "^6.0.0-beta.17",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
@@ -46,7 +47,6 @@
     "plugin-typescript": "^7.1.0",
     "sinon": "^3.2.1",
     "systemjs-plugin-css": "^0.1.35",
-    "grunt-ts": "^6",
     "typescript": "2.6.2"
   }
 }

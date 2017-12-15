@@ -101,6 +101,8 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
   mouse: any;
   data: any;
 
+  // Used for the editor control
+  subTabIndex: 0;
 
   /** @ngInject **/
   constructor($scope, $injector, $window, private $rootScope, private uiSegmentSrv) {
@@ -223,24 +225,24 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
         }
       });
 
-      if(false) {
-        this.graph.on('plotly_hover', (data, xxx) => {
-          console.log( 'HOVER!!!', data, xxx, this.mouse );
-          if(data.points.length>0) {
-            var idx = 0;
-            var pt = data.points[idx];
+      // if(false) {
+      //   this.graph.on('plotly_hover', (data, xxx) => {
+      //     console.log( 'HOVER!!!', data, xxx, this.mouse );
+      //     if(data.points.length>0) {
+      //       var idx = 0;
+      //       var pt = data.points[idx];
 
-            var body = '<div class="graph-tooltip-time">'+ pt.pointNumber +'</div>';
-            body += "<center>";
-            body += pt.x + ', '+pt.y;
-            body += "</center>";
+      //       var body = '<div class="graph-tooltip-time">'+ pt.pointNumber +'</div>';
+      //       body += "<center>";
+      //       body += pt.x + ', '+pt.y;
+      //       body += "</center>";
 
-            this.$tooltip.html( body ).place_tt( this.mouse.pageX + 10, this.mouse.pageY );
-          }
-        }).on('plotly_unhover', (data) => {
-          this.$tooltip.detach();
-        });
-      }
+      //       this.$tooltip.html( body ).place_tt( this.mouse.pageX + 10, this.mouse.pageY );
+      //     }
+      //   }).on('plotly_unhover', (data) => {
+      //     this.$tooltip.detach();
+      //   });
+      // }
 
       this.graph.on('plotly_selected',  (data) => {
 

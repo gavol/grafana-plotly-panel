@@ -213,22 +213,6 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                                 _this.$rootScope.appEvent('alert-success', [msg, '@ ' + _this.dashboard.formatDate(moment_1.default(ts))]);
                             }
                         });
-                        if (false) {
-                            this.graph.on('plotly_hover', function (data, xxx) {
-                                console.log('HOVER!!!', data, xxx, _this.mouse);
-                                if (data.points.length > 0) {
-                                    var idx = 0;
-                                    var pt = data.points[idx];
-                                    var body = '<div class="graph-tooltip-time">' + pt.pointNumber + '</div>';
-                                    body += "<center>";
-                                    body += pt.x + ', ' + pt.y;
-                                    body += "</center>";
-                                    _this.$tooltip.html(body).place_tt(_this.mouse.pageX + 10, _this.mouse.pageY);
-                                }
-                            }).on('plotly_unhover', function (data) {
-                                _this.$tooltip.detach();
-                            });
-                        }
                         this.graph.on('plotly_selected', function (data) {
                             if (data.points.length == 0) {
                                 console.log("Nothign Selected", data);

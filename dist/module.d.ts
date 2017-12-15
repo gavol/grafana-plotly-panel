@@ -98,6 +98,7 @@ declare class PlotlyPanelCtrl extends MetricsPanelCtrl {
     segs: any;
     mouse: any;
     data: any;
+    subTabIndex: 0;
     constructor($scope: any, $injector: any, $window: any, $rootScope: any, uiSegmentSrv: any);
     onResize(): void;
     onDataError(err: any): void;

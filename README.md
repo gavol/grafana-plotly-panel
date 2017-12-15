@@ -24,6 +24,7 @@ grunt
 ##### v0.0.4  (not released yet)
 - Load plotly from npm (1.31+)
 - Convert to TypeScript
+- Reasonable behavior when adding single metric
 
 ##### v0.0.3
 

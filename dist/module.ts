@@ -294,12 +294,14 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
   }
 
   onDataReceived(dataList) {
+    console.log( 'GOT Data', dataList );
+
     this.trace.x = [];
     this.trace.y = [];
     this.trace.z = [];
 
     this.data = {};
-    if(dataList.length < 2) {
+    if(dataList.length < 1) {
       console.log( "No data", dataList );
     }
     else {
@@ -399,7 +401,8 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
         throw { message: "Unable to find X: "+mapping.x };
       }
       if(!dY) {
-        throw { message: "Unable to find Y: "+mapping.y };
+        dY = dX;
+        dX = '@time';
       }
 
 

@@ -36,7 +36,7 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
           shape : 'linear'
         },
         marker: {
-          size: 30,
+          size: 15,
           symbol: 'circle',
           color: '#33B5E5',
           colorscale: 'YIOrRd',
@@ -299,7 +299,7 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
     this.trace.z = [];
 
     this.data = {};
-    if(dataList.length < 2) {
+    if(dataList.length < 1) {
       console.log( "No data", dataList );
     }
     else {
@@ -399,7 +399,8 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
         throw { message: "Unable to find X: "+mapping.x };
       }
       if(!dY) {
-        throw { message: "Unable to find Y: "+mapping.y };
+        dY = dX;
+        dX = '@time';
       }
 
 

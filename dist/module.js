@@ -251,11 +251,12 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                     this.initalized = true;
                 };
                 PlotlyPanelCtrl.prototype.onDataReceived = function (dataList) {
+                    console.log('GOT Data', dataList);
                     this.trace.x = [];
                     this.trace.y = [];
                     this.trace.z = [];
                     this.data = {};
-                    if (dataList.length < 2) {
+                    if (dataList.length < 1) {
                         console.log("No data", dataList);
                     }
                     else {
@@ -346,7 +347,8 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                             throw { message: "Unable to find X: " + mapping.x };
                         }
                         if (!dY) {
-                            throw { message: "Unable to find Y: " + mapping.y };
+                            dY = dX;
+                            dX = '@time';
                         }
                         this.trace.ts = key.points;
                         this.trace.x = dX.points;

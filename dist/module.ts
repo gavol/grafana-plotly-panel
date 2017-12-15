@@ -152,7 +152,7 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
   }
 
   onInitEditMode() {
-    this.addEditorTab('Display', 'public/plugins/natel-plotly-panel/tab_display.html',2);
+    this.addEditorTab('Display', 'public/plugins/natel-plotly-panel/partials/tab_display.html',2);
   //  this.editorTabIndex = 1;
     this.refresh();
     this.segs = {
@@ -631,7 +631,6 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
     return this.$q.when( segs );
   }
 }
-PlotlyPanelCtrl.templateUrl = 'module.html';
 
 export {
   PlotlyPanelCtrl as PanelCtrl

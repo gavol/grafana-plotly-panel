@@ -148,7 +148,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                     }
                 };
                 PlotlyPanelCtrl.prototype.onInitEditMode = function () {
-                    this.addEditorTab('Display', 'public/plugins/natel-plotly-panel/tab_display.html', 2);
+                    this.addEditorTab('Display', 'public/plugins/natel-plotly-panel/partials/tab_display.html', 2);
                     this.refresh();
                     this.segs = {
                         symbol: this.uiSegmentSrv.newSegment({ value: this.panel.pconfig.settings.marker.symbol })
@@ -563,7 +563,6 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                 return PlotlyPanelCtrl;
             }(sdk_1.MetricsPanelCtrl));
             exports_1("PanelCtrl", PlotlyPanelCtrl);
-            PlotlyPanelCtrl.templateUrl = 'module.html';
         }
     };
 });

@@ -168,7 +168,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                     ];
                 };
                 PlotlyPanelCtrl.prototype.isAxisVisible = function (axis) {
-                    if (axis.idx == 3) {
+                    if (axis.idx === 3) {
                         return this.panel.pconfig.settings.type === 'scatter3d';
                     }
                     return true;
@@ -214,7 +214,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                             }
                         });
                         this.graph.on('plotly_selected', function (data) {
-                            if (data.points.length == 0) {
+                            if (data.points.length === 0) {
                                 console.log("Nothign Selected", data);
                                 return;
                             }
@@ -298,17 +298,17 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                                 else if (lodash_1.default.isBoolean(datapoints[0][0])) {
                                     val.type = 'boolean';
                                 }
-                                if (i == 0) {
+                                if (i === 0) {
                                     dmapping.x = val.name;
                                 }
-                                else if (i == 1) {
+                                else if (i === 1) {
                                     dmapping.y = val.name;
                                 }
-                                else if (i == 2) {
+                                else if (i === 2) {
                                     dmapping.z = val.name;
                                 }
                                 this.data[val.name] = val;
-                                if (key.points.length == 0) {
+                                if (key.points.length === 0) {
                                     for (var j = 0; j < datapoints.length; j++) {
                                         key.points.push(datapoints[j][1]);
                                         val.points.push(datapoints[j][0]);
@@ -320,7 +320,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                                         if (j >= key.points.length) {
                                             break;
                                         }
-                                        if (key.points[j] == datapoints[j][1]) {
+                                        if (key.points[j] === datapoints[j][1]) {
                                             val.points.push(datapoints[j][0]);
                                         }
                                         else {
@@ -330,12 +330,15 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                                 }
                             }
                         }
-                        if (!mapping.x)
+                        if (!mapping.x) {
                             mapping.x = dmapping.x;
-                        if (!mapping.y)
+                        }
+                        if (!mapping.y) {
                             mapping.y = dmapping.y;
-                        if (!mapping.z)
+                        }
+                        if (!mapping.z) {
                             mapping.z = dmapping.z;
+                        }
                         var dX = this.data[mapping.x];
                         var dY = this.data[mapping.y];
                         var dZ = null;
@@ -352,7 +355,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                         this.trace.ts = key.points;
                         this.trace.x = dX.points;
                         this.trace.y = dY.points;
-                        if (cfg.settings.type == 'scatter3d') {
+                        if (cfg.settings.type === 'scatter3d') {
                             dZ = this.data[mapping.z];
                             if (!dZ) {
                                 throw { message: "Unable to find Z: " + mapping.z };
@@ -376,7 +379,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                             }
                             this.trace.marker.size = dS.points;
                         }
-                        if (cfg.settings.color_option == 'ramp') {
+                        if (cfg.settings.color_option === 'ramp') {
                             if (!mapping.color) {
                                 mapping.color = idx.name;
                             }

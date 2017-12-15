@@ -4,9 +4,9 @@ module.exports = function(grunt) {
   var pkgJson = require('./package.json');
 
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-typescript');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-string-replace');
+  grunt.loadNpmTasks("grunt-tslint");
 
   grunt.initConfig({
     clean: ['dist', 'src/lib'],
@@ -71,6 +71,24 @@ module.exports = function(grunt) {
           "noImplicitAny": false,
           "strictNullChecks": false,
           "skipLibCheck": true
+        }
+      }
+    },
+
+    // NOT WORKING!
+    // this does: node_modules/tslint/bin/tslint -c tslint.json --fix 'src/**/*.ts'
+    tslint: {
+      options: {
+        // can be a configuration object or a filepath to tslint.json
+        configuration: "tslint.json",
+        // If set to true, tslint errors will be reported, but not fail the task
+        // If set to false, tslint errors will be reported, and the task will fail
+        force: false,
+        fix: false
+      },
+      default: {
+        files: {
+          src: ['src/**/*.ts', '!**/*.d.ts'],
         }
       }
     },

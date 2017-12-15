@@ -327,7 +327,7 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
       this.data[key.name] = key;
       this.data[idx.name] = idx;
       for(let i=0; i<dataList.length; i++) {
-        let datapoints = dataList[i].datapoints;
+        let datapoints: any[] = dataList[i].datapoints;
         if(datapoints.length > 0) {
           let val = {
             name: dataList[i].target,

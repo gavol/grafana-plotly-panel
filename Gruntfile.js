@@ -12,13 +12,6 @@ module.exports = function(grunt) {
     clean: ['dist', 'src/lib'],
 
     copy: {
-      hack_grafana_sdk: { // See: https://github.com/grafana/grafana-sdk-mocks/issues/1
-        expand: true,
-        flatten: true,
-        cwd: 'hack',
-        src: ['*.ts'],
-        dest: 'node_modules/grafana-sdk-mocks/app/headers'
-      },
 
       libs: {
         cwd: 'node_modules/plotly.js/dist',
@@ -26,14 +19,6 @@ module.exports = function(grunt) {
         src: ['plotly.min.js'],
         dest: 'src/lib'
       },
-      libs2: {
-        cwd: 'hack',
-        expand: true,
-        src: ['plotly.min.d.ts'],
-        dest: 'src/lib'
-      },
-
-
       dist_js: {
         expand: true,
         cwd: 'src',
@@ -69,19 +54,24 @@ module.exports = function(grunt) {
       }
     },
 
-    typescript: {
+    ts: {
       build: {
-        src: ['dist/**/*.ts', '!**/*.d.ts'],
-        dest: 'dist',
+        src: ['src/**/*.ts', '!**/*.d.ts', '!**/*.min.js'],
+        outDir: 'dist',
         options: {
-          module: 'system',
-          target: 'es5',
-          rootDir: 'dist/',
-          declaration: true,
-          emitDecoratorMetadata: true,
-          experimentalDecorators: true,
-          sourceMap: true,
-          noImplicitAny: false
+          rootDir: "src",
+          verbose: true,
+
+          declaration: false,
+
+          "target": "ES5",
+          "module": "system",
+          "sourceMap": true,
+          "declaration": true,
+          "emitDecoratorMetadata": true,
+          "experimentalDecorators": true,
+          "noImplicitAny": false,
+          "strictNullChecks": false,
         }
       }
     },
@@ -117,10 +107,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', [
     'clean',
-    'copy:hack_grafana_sdk',
-    'copy:libs', 'copy:libs2',
+    'copy:libs',
     'copy:dist_js',
-    'typescript:build',
+    'ts:build',
     'copy:dist_html',
     'copy:dist_css',
     'copy:dist_img',

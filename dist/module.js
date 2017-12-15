@@ -60,7 +60,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                                     shape: 'linear'
                                 },
                                 marker: {
-                                    size: 30,
+                                    size: 15,
                                     symbol: 'circle',
                                     color: '#33B5E5',
                                     colorscale: 'YIOrRd',
@@ -251,7 +251,6 @@ System.register(["app/plugins/sdk", "lodash", "moment", "angular", "jquery", "./
                     this.initalized = true;
                 };
                 PlotlyPanelCtrl.prototype.onDataReceived = function (dataList) {
-                    console.log('GOT Data', dataList);
                     this.trace.x = [];
                     this.trace.y = [];
                     this.trace.z = [];

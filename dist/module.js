@@ -323,7 +323,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "jquery", "./lib/plotly.
                         };
                         var cfg = this.panel.pconfig;
                         var mapping = cfg.mapping;
-                        var key = {
+                        var key_1 = {
                             name: '@time',
                             type: 'ms',
                             missing: 0,
@@ -337,7 +337,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "jquery", "./lib/plotly.
                             idx: -1,
                             points: [],
                         };
-                        this.data[key.name] = key;
+                        this.data[key_1.name] = key_1;
                         this.data[idx.name] = idx;
                         for (var i = 0; i < dataList.length; i++) {
                             if ('table' === dataList[i].type) {
@@ -358,7 +358,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "jquery", "./lib/plotly.
                                         points: [],
                                     };
                                     if (j == 0 && val.type === 'time') {
-                                        val = key;
+                                        val = key_1;
                                     }
                                     if (!val.type) {
                                         val.type = 'number';
@@ -395,24 +395,30 @@ System.register(["app/plugins/sdk", "lodash", "moment", "jquery", "./lib/plotly.
                                         dmapping.z = val.name;
                                     }
                                     this.data[val.name] = val;
-                                    if (key.points.length === 0) {
+                                    if (key_1.points.length === 0) {
                                         for (var j = 0; j < datapoints.length; j++) {
-                                            key.points.push(datapoints[j][1]);
+                                            key_1.points.push(datapoints[j][1]);
                                             val.points.push(datapoints[j][0]);
                                             idx.points.push(j);
                                         }
                                     }
                                     else {
-                                        for (var j = 0; j < datapoints.length; j++) {
-                                            if (j >= key.points.length) {
-                                                break;
+                                        var _loop_1 = function (j) {
+                                            if (j >= key_1.points.length) {
+                                                return "break";
                                             }
-                                            if (key.points[j] === datapoints[j][1]) {
-                                                val.points.push(datapoints[j][0]);
+                                            var matchingPoint = lodash_1.default.findLast(datapoints, function (value, index) { return (value[0] !== null && value[1] <= key_1.points[j]); });
+                                            if (matchingPoint !== undefined) {
+                                                val.points.push(matchingPoint[0]);
                                             }
                                             else {
                                                 val.missing = val.missing + 1;
                                             }
+                                        };
+                                        for (var j = 0; j < datapoints.length; j++) {
+                                            var state_1 = _loop_1(j);
+                                            if (state_1 === "break")
+                                                break;
                                         }
                                     }
                                 }
@@ -440,7 +446,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "jquery", "./lib/plotly.
                             dY = dX;
                             dX = '@time';
                         }
-                        this.trace.ts = key.points;
+                        this.trace.ts = key_1.points;
                         this.trace.x = dX.points;
                         this.trace.y = dY.points;
                         if (cfg.settings.type === 'scatter3d') {

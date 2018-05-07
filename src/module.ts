@@ -478,9 +478,12 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
                 if (j >= key.points.length) {
                   break;
                 }
-                // Make sure it is from the same timestamp
-                if (key.points[j] === datapoints[j][1]) {
-                  val.points.push(datapoints[j][0]);
+                // Align time series
+                let matchingPoint = _.findLast(datapoints, function(value, index) {
+                  return value[0] !== null && value[1] <= key.points[j];
+                });
+                if (matchingPoint !== undefined) {
+                  val.points.push(matchingPoint[0]);
                 } else {
                   val.missing = val.missing + 1;
                 }

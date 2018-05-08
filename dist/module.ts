@@ -474,14 +474,19 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
                 idx.points.push(j);
               }
             } else {
+              // Create simple array with time-stamps only
+              let strippedArray: number[] = [];
+              _.forEach(datapoints, function(value) { strippedArray.push(value[1]); });
+                
               for (let j = 0; j < datapoints.length; j++) {
                 if (j >= key.points.length) {
                   break;
                 }
                 // Align time series
-                let matchingPoint = _.findLast(datapoints, function(value, index) { return (value[0] !== null && value[1] <= key.points[j]); });
-                if (matchingPoint !== undefined) {
-                  val.points.push(matchingPoint[0]);
+                // The array is time-ordered, so a binary search can be done
+                let idxPoint = _.sortedIndexBy(strippedArray, key.points[j]);
+                if ((idxPoint > 0) && (datapoints[idxPoint - 1][0] !== null)) {
+                  val.points.push(datapoints[idxPoint - 1][0]);
                 } else {
                   val.missing = val.missing + 1;
                 }

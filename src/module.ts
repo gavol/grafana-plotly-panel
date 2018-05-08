@@ -480,14 +480,15 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
                 strippedArray.push(value[1]);
               });
 
-              for (let j = 0; j < datapoints.length; j++) {
-                if (j >= key.points.length) {
-                  break;
-                }
+              for (let j = 0; j < key.points.length; j++) {
                 // Align time series
-                // The array is time-ordered, so a binary search can be done
-                let idxPoint = _.sortedIndexBy(strippedArray, key.points[j]);
-                if (idxPoint > 0 && datapoints[idxPoint - 1][0] !== null) {
+                // The array is already time-ordered, so a binary search can be done
+                let idxPoint = _.sortedIndex(strippedArray, key.points[j]);
+                if (
+                  idxPoint > 0 &&
+                  idxPoint < strippedArray.length &&
+                  datapoints[idxPoint - 1][0] !== null
+                ) {
                   val.points.push(datapoints[idxPoint - 1][0]);
                 } else {
                   val.missing = val.missing + 1;

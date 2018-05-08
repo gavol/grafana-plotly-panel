@@ -404,13 +404,12 @@ System.register(["app/plugins/sdk", "lodash", "moment", "jquery", "./lib/plotly.
                                     }
                                     else {
                                         var strippedArray_1 = [];
-                                        lodash_1.default.forEach(datapoints, function (value) { strippedArray_1.push(value[1]); });
-                                        for (var j = 0; j < datapoints.length; j++) {
-                                            if (j >= key.points.length) {
-                                                break;
-                                            }
-                                            var idxPoint = lodash_1.default.sortedIndexBy(strippedArray_1, key.points[j]);
-                                            if ((idxPoint > 0) && (datapoints[idxPoint - 1][0] !== null)) {
+                                        lodash_1.default.forEach(datapoints, function (value) {
+                                            strippedArray_1.push(value[1]);
+                                        });
+                                        for (var j = 0; j < key.points.length; j++) {
+                                            var idxPoint = lodash_1.default.sortedIndex(strippedArray_1, key.points[j]);
+                                            if ((idxPoint > 0) && (idxPoint < strippedArray_1.length) && (datapoints[idxPoint - 1][0] !== null)) {
                                                 val.points.push(datapoints[idxPoint - 1][0]);
                                             }
                                             else {

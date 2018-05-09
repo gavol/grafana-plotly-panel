@@ -479,14 +479,21 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
               _.forEach(datapoints, function(value) {
                 strippedArray.push(value[1]);
               });
-
+                
               for (let j = 0; j < key.points.length; j++) {
                 // Align time series
                 // The array is already time-ordered, so a binary search can be done
                 let idxPoint = _.sortedIndex(strippedArray, key.points[j]);
-                if ((idxPoint > 0) && (idxPoint < strippedArray.length) && (datapoints[idxPoint - 1][0] !== null)) {
+                if (
+                  idxPoint > 0 &&
+                  idxPoint < strippedArray.length &&
+                  datapoints[idxPoint - 1][0] !== null
+                ) {
                   val.points.push(datapoints[idxPoint - 1][0]);
                 } else {
+                  // We need to insert NaN in order to keep the series with the same number of entries
+                  // Points with NaN will not be shown on the scatter graph
+                  val.points.push(NaN);
                   val.missing = val.missing + 1;
                 }
               }

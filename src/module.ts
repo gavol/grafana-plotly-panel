@@ -491,6 +491,9 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
                 ) {
                   val.points.push(datapoints[idxPoint - 1][0]);
                 } else {
+                  // We need to insert NaN in order to keep the series with the same number of entries
+                  // Points with NaN will not be shown on the scatter graph
+                  val.points.push(NaN);
                   val.missing = val.missing + 1;
                 }
               }

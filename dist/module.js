@@ -409,10 +409,13 @@ System.register(["app/plugins/sdk", "lodash", "moment", "jquery", "./lib/plotly.
                                         });
                                         for (var j = 0; j < key.points.length; j++) {
                                             var idxPoint = lodash_1.default.sortedIndex(strippedArray_1, key.points[j]);
-                                            if ((idxPoint > 0) && (idxPoint < strippedArray_1.length) && (datapoints[idxPoint - 1][0] !== null)) {
+                                            if (idxPoint > 0 &&
+                                                idxPoint < strippedArray_1.length &&
+                                                datapoints[idxPoint - 1][0] !== null) {
                                                 val.points.push(datapoints[idxPoint - 1][0]);
                                             }
                                             else {
+                                                val.points.push(NaN);
                                                 val.missing = val.missing + 1;
                                             }
                                         }

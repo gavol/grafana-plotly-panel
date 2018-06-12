@@ -70,6 +70,7 @@ declare class PlotlyPanelCtrl extends MetricsPanelCtrl {
                     rangemode: string;
                 };
                 yaxis: {
+                    automargin: boolean;
                     showgrid: boolean;
                     zeroline: boolean;
                     type: string;

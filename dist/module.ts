@@ -77,6 +77,7 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
           rangemode: 'normal', // (enumerated: "normal" | "tozero" | "nonnegative" )
         },
         yaxis: {
+          automargin: true,
           showgrid: true,
           zeroline: false,
           type: 'linear',
@@ -360,11 +361,13 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
       Plotly.redraw(this.graph);
     }
 
-    if (this.sizeChanged && this.graph && this.layout) {
+    if (this.graph && this.layout) {
       let rect = this.graph.getBoundingClientRect();
-      this.layout.width = rect.width;
-      this.layout.height = this.height;
-      Plotly.Plots.resize(this.graph);
+      if(this.sizeChanged || this.layout.width !== rect.width || this.layout.height !== rect.height) {
+        this.layout.width = rect.width;
+        this.layout.height = this.height;
+        Plotly.relayout(this.graph, this.layout);
+      }
     }
     this.sizeChanged = false;
     this.initalized = true;
@@ -479,7 +482,7 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
               _.forEach(datapoints, function(value) {
                 strippedArray.push(value[1]);
               });
-                
+
               for (let j = 0; j < key.points.length; j++) {
                 // Align time series
                 // The array is already time-ordered, so a binary search can be done

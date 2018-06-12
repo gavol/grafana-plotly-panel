@@ -98,6 +98,7 @@ System.register(["app/plugins/sdk", "lodash", "moment", "jquery", "./lib/plotly.
                                     rangemode: 'normal',
                                 },
                                 yaxis: {
+                                    automargin: true,
                                     showgrid: true,
                                     zeroline: false,
                                     type: 'linear',
@@ -295,11 +296,13 @@ System.register(["app/plugins/sdk", "lodash", "moment", "jquery", "./lib/plotly.
                     else {
                         Plotly.redraw(this.graph);
                     }
-                    if (this.sizeChanged && this.graph && this.layout) {
+                    if (this.graph && this.layout) {
                         var rect = this.graph.getBoundingClientRect();
-                        this.layout.width = rect.width;
-                        this.layout.height = this.height;
-                        Plotly.Plots.resize(this.graph);
+                        if (this.sizeChanged || this.layout.width !== rect.width || this.layout.height !== rect.height) {
+                            this.layout.width = rect.width;
+                            this.layout.height = this.height;
+                            Plotly.relayout(this.graph, this.layout);
+                        }
                     }
                     this.sizeChanged = false;
                     this.initalized = true;

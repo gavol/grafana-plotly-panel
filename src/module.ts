@@ -707,13 +707,77 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
       this._updateTracesFromConfigs();
     }
 
+    // Time-align data series
+    let timeAlignedSeries: any = {};
+    this.traces.forEach(trace => {
+      timeAlignedSeries[trace.name] = {};
+
+      if (trace.__set) {
+        console.log('Time aligning data for trace ' + trace.name);
+
+        let otherSeries: any[] = [];
+        let mainSeries: any = {};
+        trace.__set.forEach(v => {
+          if (v.path === 'x') {
+            mainSeries['s'] = this.seriesByKey.get(v.key);
+            mainSeries['t'] = [];
+            mainSeries['s'].series.datapoints.forEach(d => {
+              mainSeries['t'].push(d[1]);
+            });
+          } else {
+            let tmpSeries: any = {};
+
+            tmpSeries['s'] = this.seriesByKey.get(v.key);
+            tmpSeries['t'] = [];
+            tmpSeries['s'].series.datapoints.forEach(d => {
+              tmpSeries['t'].push(d[1]);
+            });
+
+            otherSeries.push(tmpSeries);
+          }
+        });
+
+        timeAlignedSeries[trace.name][mainSeries['s'].name] = mainSeries['s'];
+
+        otherSeries.forEach(s => {
+          if (timeAlignedSeries[trace.name][s['s'].name] === undefined) {
+            const timeToAlign = s['t'];
+            const dataToAlign = s['s'].series.datapoints;
+            const referenceDP = mainSeries['s'].series.datapoints;
+            var alignedDP: any[] = [];
+            for (let j = 0; j < referenceDP.length; ++j) {
+              let idx = _.sortedIndex(timeToAlign, referenceDP[j][1]);
+              if (idx > 0 && idx < timeToAlign.length && dataToAlign[idx - 1][0] !== null) {
+                alignedDP.push([dataToAlign[idx - 1][0], dataToAlign[idx - 1][1]]);
+              } else {
+                alignedDP.push([NaN, NaN]);
+              }
+            }
+
+            let dataSeries: any = {};
+            dataSeries['target'] = s['s'].series.target;
+            dataSeries['datapoints'] = alignedDP;
+
+            timeAlignedSeries[trace.name][s['s'].name] = new SeriesWrapperSeries(
+              s['s'].refId,
+              dataSeries,
+              s['s'].value
+            );
+          }
+        });
+      }
+    });
+
     // Use zero when the metric value is missing
     // Plotly gets lots of errors when the values are missing
     let zero: any = [];
     this.traces.forEach(trace => {
       if (trace.__set) {
         trace.__set.forEach(v => {
-          const s = this.seriesByKey.get(v.key);
+          let s = timeAlignedSeries[trace.name][v.key];
+          if (s === undefined) {
+            s = this.seriesByKey.get(v.key);
+          }
           let vals: any[] = zero;
           if (s) {
             vals = s.toArray();

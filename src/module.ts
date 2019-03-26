@@ -709,64 +709,103 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
 
     // Time-align data series
     let timeAlignedSeries: any = {};
-    this.traces.forEach(trace => {
-      timeAlignedSeries[trace.name] = {};
+    try {
+      this.traces.forEach(trace => {
+        timeAlignedSeries[trace.name] = {};
 
-      if (trace.__set) {
-        console.log('Time aligning data for trace ' + trace.name);
+        if (trace.__set && trace.__set.length > 1) {
+          console.log('Time aligning data for trace ' + trace.name);
 
-        let otherSeries: any[] = [];
-        let mainSeries: any = {};
-        trace.__set.forEach(v => {
-          if (v.path === 'x') {
-            mainSeries['s'] = this.seriesByKey.get(v.key);
-            mainSeries['t'] = [];
-            mainSeries['s'].series.datapoints.forEach(d => {
-              mainSeries['t'].push(d[1]);
-            });
-          } else {
-            let tmpSeries: any = {};
+          let otherSeries: any[] = [];
+          let mainSeries: any = {};
+          trace.__set.forEach(v => {
+            if (v.path === 'x') {
+              mainSeries = this.seriesByKey.get(v.key);
+              if (mainSeries === undefined || !(mainSeries instanceof SeriesWrapperSeries)) {
+                throw "Series '" + v.key + "' not found or invalid";
+              }
+            } else {
+              const series = this.seriesByKey.get(v.key);
+              if (series !== undefined && series instanceof SeriesWrapperSeries) {
+                let tmpSeries: any = {};
 
-            tmpSeries['s'] = this.seriesByKey.get(v.key);
-            tmpSeries['t'] = [];
-            tmpSeries['s'].series.datapoints.forEach(d => {
-              tmpSeries['t'].push(d[1]);
-            });
+                tmpSeries['s'] = series;
+                tmpSeries['t'] = [];
+                tmpSeries['s'].series.datapoints.forEach(d => {
+                  tmpSeries['t'].push(d[1]);
+                });
 
-            otherSeries.push(tmpSeries);
-          }
-        });
-
-        timeAlignedSeries[trace.name][mainSeries['s'].name] = mainSeries['s'];
-
-        otherSeries.forEach(s => {
-          if (timeAlignedSeries[trace.name][s['s'].name] === undefined) {
-            const timeToAlign = s['t'];
-            const dataToAlign = s['s'].series.datapoints;
-            const referenceDP = mainSeries['s'].series.datapoints;
-            var alignedDP: any[] = [];
-            for (let j = 0; j < referenceDP.length; ++j) {
-              let idx = _.sortedIndex(timeToAlign, referenceDP[j][1]);
-              if (idx > 0 && idx < timeToAlign.length && dataToAlign[idx - 1][0] !== null) {
-                alignedDP.push([dataToAlign[idx - 1][0], dataToAlign[idx - 1][1]]);
+                otherSeries.push(tmpSeries);
               } else {
-                alignedDP.push([NaN, NaN]);
+                throw "Series '" + v.key + "' not found or invalid";
               }
             }
+          });
 
-            let dataSeries: any = {};
-            dataSeries['target'] = s['s'].series.target;
-            dataSeries['datapoints'] = alignedDP;
+          timeAlignedSeries[trace.name][mainSeries.name] = mainSeries;
 
-            timeAlignedSeries[trace.name][s['s'].name] = new SeriesWrapperSeries(
-              s['s'].refId,
-              dataSeries,
-              s['s'].value
-            );
-          }
-        });
-      }
-    });
+          otherSeries.forEach(s => {
+            // Let's not align the same series more than once
+            if (timeAlignedSeries[trace.name][s['s'].name] === undefined) {
+              // Series are aligned with respect to the main series (i.e., the series on the X axis)
+              // For each point on the main series, a corresponding point is found on the other series;
+              // the "sortedIndex" function is used to identify the matching index
+              // Example:
+              // - series to align = [1.5, 2.5, 3.5, 4.5, 5.5]
+              // - main series = [1, 1.5, 2, 3, 4, 5, 5.5, 6]
+              // A loop is done on the main series looking for an insertion point in the series to align:
+              // - 1 -> null (out of range  - i.e., less than 1.5)
+              // - 1.5 -> 1.5 (1.5 should be inserted at index 0 and the two values are the same)
+              // - 2 -> 1.5 (2 should be inserted at index 1 in the series to align)
+              // - 3 -> 2.5 (3 should be inserted at index 2 in the series to align)
+              // - 4 -> 3.5 (4 should be inserted at index 3 in the series to align)
+              // - 5 -> 3.5 (5 should be inserted at index 4 in the series to align)
+              // - 5.5 -> 5.5 (5.5 should be inserted at index 4 and the two values are the same)
+              // - 6 -> null (out of range - i.e., bigger that 5.5)
+              // It is important to keep the number of entries the same, hence the insertion of null values
+              const timeToAlign = s['t'];
+              const dataToAlign = s['s'].series.datapoints;
+              const referenceDP = mainSeries.series.datapoints;
+              var alignedDP: any[] = [];
+              for (let j = 0; j < referenceDP.length; ++j) {
+                let idx = _.sortedIndex(timeToAlign, referenceDP[j][1]);
+                let data = null;
+                let timeStamp = null;
+                if (idx > 0 && idx < timeToAlign.length && referenceDP[j][1] !== timeToAlign[idx]) {
+                  data = dataToAlign[idx - 1][0];
+                  timeStamp = data !== null ? dataToAlign[idx - 1][1] : null;
+                } else if (
+                  idx >= 0 &&
+                  idx < timeToAlign.length &&
+                  referenceDP[j][1] === timeToAlign[idx]
+                ) {
+                  data = dataToAlign[idx][0];
+                  timeStamp = data !== null ? dataToAlign[idx][1] : null;
+                }
+                alignedDP.push([data, timeStamp]);
+              }
+
+              let dataSeries: any = {};
+              dataSeries['target'] = s['s'].series.target;
+              dataSeries['datapoints'] = alignedDP;
+
+              timeAlignedSeries[trace.name][s['s'].name] = new SeriesWrapperSeries(
+                s['s'].refId,
+                dataSeries,
+                s['s'].value
+              );
+            }
+          });
+        }
+      });
+    } catch (err) {
+      console.warn('Could not align time series: ' + err);
+
+      // Make sure that "timeAlignedSeries" is anyway valid for all the traces
+      this.traces.forEach(trace => {
+        timeAlignedSeries[trace.name] = {};
+      });
+    }
 
     // Use zero when the metric value is missing
     // Plotly gets lots of errors when the values are missing
@@ -774,7 +813,7 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
     this.traces.forEach(trace => {
       if (trace.__set) {
         trace.__set.forEach(v => {
-          let s = timeAlignedSeries[trace.name][v.key];
+          let s = timeAlignedSeries[trace.name][v.key]; // Note: "timeAlignedSeries" is valid for all the traces
           if (s === undefined) {
             s = this.seriesByKey.get(v.key);
           }

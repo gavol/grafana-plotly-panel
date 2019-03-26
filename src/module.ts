@@ -101,6 +101,7 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
           rangemode: 'normal', // (enumerated: "normal" | "tozero" | "nonnegative" )
         },
         yaxis: {
+          automargin: true,
           showgrid: true,
           zeroline: false,
           type: 'linear',
@@ -517,7 +518,12 @@ class PlotlyPanelCtrl extends MetricsPanelCtrl {
       });
       this.initialized = true;
     } else if (this.initialized) {
-      Plotly.redraw(this.graphDiv);
+      const rect = this.graphDiv.getBoundingClientRect();
+      if (this.layout.width !== rect.width || this.layout.height !== this.height) {
+        this.layout.width = rect.width;
+        this.layout.height = this.height;
+        Plotly.relayout(this.graphDiv, this.layout);
+      }
     } else {
       console.log('Not initialized yet!');
     }
